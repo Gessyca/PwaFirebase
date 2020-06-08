@@ -11,10 +11,9 @@ function inicializarFirebase() {
         projectId: "pwachat-17510",
         storageBucket: "pwachat-17510.appspot.com",
         messagingSenderId: process.env.REACT_APP_MESSAGINGSENDERID,
-        appId: "1:1083753404734:web:a2554b1f8e57f1ed46f46f"
+        appId: "1:1083753404734:web:04ff29d1bc8fd23846f46f"
     }
 
-        console.log('Inicializando Firebase')
         firebase.initializeApp(firebaseConfig)
 }
 
