@@ -11,12 +11,14 @@ function App() {
   }, [])
 
   return (
-    <div id="container" className="inner-container">
+    <>
       {
         firebaseInstance &&
-        <LoginContainer firebaseInstance={firebaseInstance}/>
+        <div id="container" className="inner-container">
+          <LoginContainer firebaseInstance={firebaseInstance} />
+        </div>
       }
-    </div>
+    </>
   )
 }
 
