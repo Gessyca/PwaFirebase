@@ -1,37 +1,78 @@
 import React, { useState } from 'react';
-import { getProvider } from '../firebase'
 
 const LoginContainer = (props) => {
 
-    const [form, setForm] = useState({ email: '', password: '' })
+    const [form, setForm] = useState({ email: '', password: '', error: '' })
 
     const handleClickChange = (e) => {
         const { value, name } = e.target
         setForm({ ...form, [name]: value })
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        console.log(form)
+        const { email, password } = form
+        setForm({ email, password, error: '' })
+        if (email && password) {
+            const firebase = props.firebaseInstance
+            try {
+                const result = await firebase.auth().signInWithEmailAndPassword(email, password)
+                login(result, email, password)
+            } catch (error) {
+                if (error.code === 'auth/user-not-found') {
+                    singup(email, password)
+                } else {
+                    setForm({ email, password, error: 'Erro ao logar' })
+                }
+            }
+        } else {
+            setForm({ email, password, error: 'Preencha todos os campos' })
+        }
     }
 
-    const logarComGoogle = async (e) => {
-        e.preventDefault()
+    function login(result, email, password) {
+        if (result) {
+            var user = result.user;
+            console.log(user.displayName);
+            console.log(user.email);
+        } else {
+            setForm({ email, password, error: 'Nenhum dado encontrado' })
+        }
+    }
+
+    async function singup(email, password) {
+        const firebase = props.firebaseInstance
         try {
-            const firebase = props.firebaseInstance
-            const result = await firebase.auth().signInWithPopup(getProvider());
-            if (result) {
-                localStorage.setItem('token', result.credential.accessToken);
-                var user = result.user;
-                console.log(user.displayName);
-                console.log(user.email);
+            const user = await firebase.auth().createUserWithEmailAndPassword(email, password)
+            if(user){
+                props.setUsuarioLogado(user)
             } else {
-                console.log('Nenhum dado encontrado')
+                setForm({ email, password, error: 'Não foi possível realizar o cadastro' })
             }
         } catch (error) {
             console.log(error)
+            setForm({ email, password, error: 'Erro ao tentar realizar o cadastro' })
         }
+
     }
+
+    // const logarComGoogle = async (e) => {
+    //     e.preventDefault()
+    //     try {
+    //         const firebase = props.firebaseInstance
+    //         const result = await firebase.auth().signInWithPopup(getProvider());
+    //         if (result) {
+    //             localStorage.setItem('token', result.credential.accessToken);
+    //             var user = result.user;
+    //             console.log(user.displayName);
+    //             console.log(user.email);
+    //         } else {
+    //             console.log('Nenhum dado encontrado')
+    //         }
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // }
 
     return (
         <>
@@ -40,7 +81,7 @@ const LoginContainer = (props) => {
                     <img src="/assets/icon.png" alt="logo" />
                     <h1>Chatastrophe</h1>
                 </div>
-                <form onSubmit={() => handleSubmit}>
+                <form onSubmit={handleSubmit} autoComplete="off">
                     <p>Sign in or sign up by entering your email and password.</p>
                     <input name="email"
                         type="text"
@@ -52,8 +93,9 @@ const LoginContainer = (props) => {
                         onChange={handleClickChange}
                         value={form.password}
                         placeholder="Your password" />
+                    <p className="error">{form.error}</p>
                     <button className="red light" type="submit">Login</button>
-                    <button className="red light" onClick={(e) => logarComGoogle(e)}>Login Google</button>
+                    {/* <button className="red light" onClick={(e) => logarComGoogle(e)}>Login Google</button> */}
                 </form>
             </div>
         </>
