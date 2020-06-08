@@ -1,14 +1,21 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import LoginContainer from './components/LoginContainer';
-import inicializarFirebase from './firebase'
+import { inicializarFirebase } from './firebase'
 
 function App() {
 
-  useEffect(() => { inicializarFirebase() })
+  const [firebaseInstance, setFirebaseInstance] = useState(null)
+
+  useEffect(() => {
+    setFirebaseInstance(inicializarFirebase())
+  }, [])
 
   return (
     <div id="container" className="inner-container">
-      <LoginContainer />
+      {
+        firebaseInstance &&
+        <LoginContainer firebaseInstance={firebaseInstance}/>
+      }
     </div>
   )
 }

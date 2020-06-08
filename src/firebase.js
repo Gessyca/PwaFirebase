@@ -1,8 +1,7 @@
 import * as firebase from "firebase/app"
 import 'firebase/auth'
-import 'firebase/firestore'
 
-function inicializarFirebase() {
+export function inicializarFirebase() {
 
     const firebaseConfig = {
         apiKey: process.env.REACT_APP_APIKEY,
@@ -14,7 +13,11 @@ function inicializarFirebase() {
         appId: "1:1083753404734:web:04ff29d1bc8fd23846f46f"
     }
 
-        firebase.initializeApp(firebaseConfig)
+    firebase.initializeApp(firebaseConfig)
+    firebase.auth().useDeviceLanguage()
+    return firebase
 }
 
-export default inicializarFirebase
+export function getProvider() {
+    return new firebase.auth.GoogleAuthProvider()
+}
