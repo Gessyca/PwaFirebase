@@ -19,6 +19,7 @@ const LoginContainer = (props) => {
                 const result = await firebase.auth().signInWithEmailAndPassword(email, password)
                 login(result, email, password)
             } catch (error) {
+                console.log(error)
                 if (error.code === 'auth/user-not-found') {
                     singup(email, password)
                 } else {
@@ -35,6 +36,7 @@ const LoginContainer = (props) => {
             var user = result.user;
             console.log(user.displayName);
             console.log(user.email);
+            props.setUsuarioLogado(user)
         } else {
             setForm({ email, password, error: 'Nenhum dado encontrado' })
         }

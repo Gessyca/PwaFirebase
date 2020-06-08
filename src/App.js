@@ -8,9 +8,13 @@ function App() {
   const [usuarioLogado, setUsuarioLogado] = useState(null)
 
   useEffect(() => {
-    const firebaseInstanceNova = inicializarFirebase()
-    setFirebaseInstance(firebaseInstanceNova)
-    setUsuarioLogado(firebaseInstanceNova.auth().currentUser)
+    setFirebaseInstance(inicializarFirebase())
+  }, [])
+  
+  useEffect(() => {
+    if(firebaseInstance){
+      setUsuarioLogado(firebaseInstance.auth().currentUser)
+    }
   }, [firebaseInstance])
 
   return (
